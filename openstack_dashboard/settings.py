@@ -454,13 +454,6 @@ if DEFAULT_THEME_PATH is not None:
     _LOG.warning("DEFAULT_THEME_PATH has been deprecated.  Please convert "
                  "your settings to make use of AVAILABLE_THEMES.")
 
-# Discover all the directories that contain static files; at the same time
-# discover all the xstatic module entry points to embed in our HTML
-STATICFILES_DIRS = settings_utils.get_xstatic_dirs(
-    XSTATIC_MODULES, HORIZON_CONFIG)
-STATICFILES_DIRS += theme_settings.get_theme_static_dirs(
-    AVAILABLE_THEMES, THEME_COLLECTION_DIR, ROOT_PATH)
-
 # Ensure that we always have a SECRET_KEY set, even when no local_settings.py
 # file is present. See local_settings.py.example for full documentation on the
 # horizon.utils.secret_key module and its use.
@@ -492,6 +485,18 @@ settings_utils.update_dashboards(
     HORIZON_CONFIG,
     INSTALLED_APPS,
 )
+
+
+# Discover all plugin specified xstatic modules
+XSTATIC_MODULES += HORIZON_CONFIG['xstatic_modules']
+
+# Discover all the directories that contain static files; at the same time
+# discover all the xstatic module entry points to embed in our HTML
+STATICFILES_DIRS = settings_utils.get_xstatic_dirs(
+    XSTATIC_MODULES, HORIZON_CONFIG)
+STATICFILES_DIRS += theme_settings.get_theme_static_dirs(
+    AVAILABLE_THEMES, THEME_COLLECTION_DIR, ROOT_PATH)
+
 INSTALLED_APPS[0:0] = ADD_INSTALLED_APPS
 
 NG_TEMPLATE_CACHE_AGE = NG_TEMPLATE_CACHE_AGE if not DEBUG else 0
